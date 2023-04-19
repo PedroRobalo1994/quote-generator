@@ -52,7 +52,9 @@ async function getQuotes() {
         newQuote();
     }
     catch(error) {
+        getQuotes();
         alert(error);
+        console.log('Whoops, no quote:', error);
 
     }
 }
