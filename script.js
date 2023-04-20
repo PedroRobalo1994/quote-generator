@@ -6,22 +6,23 @@ const newQuoteBtn = document.getElementById('new-quote');
 const loader = document.getElementById('loader');
 
 let apiQuotes = [];
+let apiRequestCounter = 0;
 
 // Show Loading
-function loading() {
+function showLoader() {
     loader.hidden = false;
     quoteContainer.hidden = true;
 }
 
 // Hide Loading
-function complete() {
+function hideLoader() {
     quoteContainer.hidden = false;
     loader.hidden = true;
 }
 
 // Show New Quote
 function newQuote() {
-    loading();
+    showLoader();
     // Pick a random quote from apiQuotes array
     const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
     // Check if Author field is blank and replace it with 'Unknown'
@@ -39,7 +40,7 @@ function newQuote() {
     }
     // Set Quote, Hide Loader
     quoteText.textContent = quote.text;
-    complete();
+    hideLoader();
 }
 
 // Get Quotes From API
@@ -52,10 +53,14 @@ async function getQuotes() {
         newQuote();
     }
     catch(error) {
-        getQuotes();
-        alert(error);
-        console.log('Whoops, no quote:', error);
-
+        if (apiRequestCounter <= 10){
+            getQuotes();
+            alert(error);
+            console.log('Whoops, no quote:', error);
+            apiRequestCounter += 1;
+        } else {
+            throw new Error('Too many API Requests. Something is Wrong !!!')
+        }
     }
 }
 
